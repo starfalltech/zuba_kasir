@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zuba_karis/exceptions/failure.dart';
-import 'package:zuba_karis/local_storage/local_auth_storage.dart';
 
+import '../../../../core/exceptions/failure.dart';
+import '../../../../core/local_storage/local_auth_storage.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 part 'authentication_event.dart';
@@ -17,17 +17,16 @@ class AuthenticationBloc
 
   AuthenticationBloc({required this.repository})
       : super(InitialAuthenticationState()) {
-    on<Register>(registerAuth);
-    on<Login>(loginAuth);
+    on<PostRegister>(registerAuth);
+    on<PostLogin>(loginAuth);
     on<CheckAuth>(checkAuth);
   }
 
   FutureOr<void> registerAuth(
-      Register event, Emitter<AuthenticationState> emit) async {
-    print('this is regsiter');
+      PostRegister event, Emitter<AuthenticationState> emit) async {
     emit(LoadingAuthenticationState());
     final postRegister =
-        await repository.registerAuth(event.email, event.password);
+        await repository.registerAuth(event.name, event.password);
     postRegister.fold((l) {
       if (l is ServerFailure) {
         emit(FailureAuthenticationState(l.msg));
@@ -36,14 +35,14 @@ class AuthenticationBloc
   }
 
   FutureOr<void> loginAuth(
-      Login event, Emitter<AuthenticationState> emit) async {
+      PostLogin event, Emitter<AuthenticationState> emit) async {
     emit(LoadingAuthenticationState());
-    final postLogin = await repository.loginAuth(event.email, event.password);
+    final postLogin = await repository.loginAuth(event.name, event.password);
     postLogin.fold((l) {
       if (l is ServerFailure) {
         emit(FailureAuthenticationState(l.msg));
       }
-      if(l is InternalFailure){
+      if (l is InternalFailure) {
         emit(FailureAuthenticationState(l.msg));
       }
     }, (r) => emit(SuccesAuthenticationState()));
@@ -54,12 +53,14 @@ class AuthenticationBloc
     print('this is state');
     emit(LoadingAuthenticationState());
     try {
-      await LocalAuthStorage().read(event.key).then((value) {
+      await LocalAuthStorage().read(event.key).then((value) async {
+        await Future.delayed(const Duration(milliseconds: 2000));
         emit(
           SuccesAuthenticationState(),
         );
       });
     } catch (e) {
+      await Future.delayed(const Duration(milliseconds: 2000));
       emit(
         FailureAuthenticationState(e.toString()),
       );

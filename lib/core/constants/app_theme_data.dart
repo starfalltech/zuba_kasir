@@ -31,10 +31,13 @@ class AppThemeData {
         iconTheme: IconThemeData(size: 6.w),
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 20.sp),
+                minimumSize: Size(double.infinity, 22.sp),
                 foregroundColor: Colors.white,
-                textStyle: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.w600))),
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 8.sp,
+                ))),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           type: BottomNavigationBarType.fixed,
           elevation: 0,
@@ -56,13 +59,13 @@ class AppThemeData {
           ),
         ),
         appBarTheme: AppBarTheme(
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Colors.white, size: 14.sp),
           elevation: 0,
           backgroundColor: ColorValue.primary,
           titleTextStyle:
-              GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 14.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 7.sp),
           toolbarTextStyle:
-              GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 14.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 7.sp),
         ),
         textTheme: GoogleFonts.poppinsTextTheme());
   }

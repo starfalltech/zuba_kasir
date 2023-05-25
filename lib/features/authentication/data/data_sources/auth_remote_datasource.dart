@@ -1,22 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:zuba_karis/exceptions/exceptions.dart';
-import 'package:zuba_karis/firebase/auth.dart';
+
+import '../../../../core/exceptions/exceptions.dart';
+import '../../../../core/platform/platform_firestore.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<bool> registerAuth(String email, String password);
+  Future<bool> registerAuth(String name, String password);
 
-  Future<bool> loginAuth(String email, String password);
+  Future<bool> loginAuth(String name, String password);
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
-  Auth clientServices;
+  PlatformFirestore clientServices;
 
   AuthRemoteDataSourceImpl(this.clientServices);
 
   @override
-  Future<bool> loginAuth(String email, String password) async {
+  Future<bool> loginAuth(String name, String password) async {
     try {
-      final userLogin = await clientServices.loginAuth(email, password);
+      //final userLogin = await clientServices.(name, password);
       return true;
     } on FirebaseAuthException catch (e) {
       throw ServerException(e.code);
@@ -24,11 +25,10 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<bool> registerAuth(String email, String password) async{
+  Future<bool> registerAuth(String name, String password) async {
     try {
-      final userRegister = await clientServices.loginAuth(email, password);
-      return true;
-    } catch (e) {
+      return await clientServices.registerUser(name: name, password: password);
+    } catch (e, s) {
       throw ServerException(e.toString());
     }
   }

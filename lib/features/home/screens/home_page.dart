@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sizer/sizer.dart';
+import 'package:zuba_karis/core/constants/color_value.dart';
 import 'package:zuba_karis/features/home/widget/menu_grid_widget.dart';
+import 'package:zuba_karis/features/home/widget/selected_item_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -9,77 +13,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  late TabController _tabController;
-  List<String> tabItem = [
-    "Makanan",
-    "Coffe",
-    "Squash",
-  ];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _tabController = TabController(length: tabItem.length, vsync: this);
-  }
+  final List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: List.generate(
-            tabItem.length,
-            (index) => Tab(
-              text: tabItem[index],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text("Menu"),
+              const SizedBox(
+                width: 12,
+              ),
+              DropdownButton<String>(
+                value: list.first,
+                icon: const Icon(Icons.arrow_drop_down_outlined),
+                elevation: 16,
+                style: const TextStyle(color: Colors.black),
+                underline: Container(
+                  height: 2,
+                  color: ColorValue.primary,
+                ),
+                onChanged: (String? value) {
+                  // This is called when the user selects an item.
+                },
+                items: list.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          const MakananTab(),
-          CoffeTab(),
-          SquahTab()
-        ],
-      ),
+        Expanded(child: MenuGridWidget()),
+      ],
     );
-  }
-}
-
-class SquahTab extends StatelessWidget {
-  const SquahTab({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MenuGridWidget();
-  }
-}
-
-class CoffeTab extends StatelessWidget {
-  const CoffeTab({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MenuGridWidget();
-  }
-}
-
-class MakananTab extends StatelessWidget {
-  const MakananTab({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MenuGridWidget();
   }
 }

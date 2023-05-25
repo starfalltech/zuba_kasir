@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
-import 'package:zuba_karis/common_widget/dialog_loading_widget.dart';
+import 'package:zuba_karis/core/common_widget/custom_text_field_widget.dart';
+import 'package:zuba_karis/core/constants/color_value.dart';
 import 'package:zuba_karis/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:zuba_karis/features/authentication/presentation/manager/authentication_bloc.dart';
 import 'package:zuba_karis/features/authentication/presentation/pages/register_page.dart';
 import 'package:zuba_karis/features/home/screens/home_page.dart';
+import 'package:zuba_karis/features/navigation/navigation_page.dart';
+
+import '../../../../core/common_widget/dialog_loading_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,7 +21,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController email = TextEditingController();
+  TextEditingController name = TextEditingController();
   TextEditingController password = TextEditingController();
   final key = GlobalKey<FormState>();
 
@@ -31,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
             if (state is SuccesAuthenticationState) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => const HomePage(),
+                  builder: (context) => const NavigationPage(),
                 ),
               );
             }
@@ -45,93 +50,160 @@ class _LoginPageState extends State<LoginPage> {
               );
             }
             if (state is LoadingAuthenticationState) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const DialogLoadingWidget(),
+              const Center(
+                child: CircularProgressIndicator(),
               );
             }
           },
           child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (context, state) {
               return SafeArea(
-                  child: Center(
-                child: Container(
-                  width: 60.w,
-                  height: 50.h,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          offset: const Offset(5, 0),
-                          blurRadius: 7)
+                  child: SingleChildScrollView(
+                child: SizedBox(
+                  height: 96.5.w,
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/login_left_side.png',
+                        fit: BoxFit.fill,
+                        width: 55.h,
+                        height: double.infinity,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 40.0),
+                          child: Form(
+                            key: key,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        const SizedBox(
+                                          height: 30,
+                                        ),
+                                        Text(
+                                          'Selamat Datang,',
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 15.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Zuba Barista',
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 15.sp,
+                                            color: ColorValue.primary,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 50,
+                                ),
+                                CustomTextFieldWidget(
+                                  controller: name,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 10.sp,
+                                      right: 6.sp,
+                                      top: 5.sp,
+                                      bottom: 5.sp,
+                                    ),
+                                    child: SvgPicture.asset(
+                                        'assets/icons/icon_email.svg'),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  },
+                                  label: 'name',
+                                  obsecure: false,
+                                ),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                CustomTextFieldWidget(
+                                  controller: password,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 10.sp,
+                                      right: 6.sp,
+                                      top: 5.sp,
+                                      bottom: 5.sp,
+                                    ),
+                                    child: SvgPicture.asset(
+                                        'assets/icons/icon_password.svg'),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  },
+                                  label: 'password',
+                                  obsecure: true,
+                                ),
+                                const SizedBox(
+                                  height: 50,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (key.currentState!.validate()) {
+                                      context.read<AuthenticationBloc>().add(
+                                          PostLogin(name.text, password.text));
+                                    }
+                                  },
+                                  child: const Text("Masuk"),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                  child: Text('atau'),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(double.infinity, 22.sp),
+                                      foregroundColor: ColorValue.primary,
+                                      backgroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          side: const BorderSide(
+                                            color: ColorValue.primary,
+                                          )),
+                                      textStyle: TextStyle(
+                                        color: ColorValue.primary,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 8.sp,
+                                      )),
+                                  onPressed: () {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RegisterPage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                  child: const Text("Daftar"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
-                  ),
-                  child: Form(
-                    key: key,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Login',
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                              fontSize: 16.sp),
-                        ),
-                        TextFormField(
-                          controller: email,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'email',
-                          ),
-                        ),
-                        TextFormField(
-                          controller: password,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-                            return null;
-                          },
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Password',
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (key.currentState!.validate()) {
-                              context
-                                  .read<AuthenticationBloc>()
-                                  .add(Login(email.text, password.text));
-                            }
-                          },
-                          child: const Text("Login"),
-                        ),
-                        const Text('atau'),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterPage(),
-                              ),
-                            );
-                          },
-                          child: const Text("Register"),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ));

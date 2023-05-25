@@ -6,8 +6,9 @@ import 'package:zuba_karis/features/authentication/domain/repositories/auth_repo
 import 'package:zuba_karis/features/authentication/presentation/manager/authentication_bloc.dart';
 import 'package:zuba_karis/features/authentication/presentation/pages/login_page.dart';
 import 'package:zuba_karis/features/home/screens/home_page.dart';
+import 'package:zuba_karis/features/navigation/navigation_page.dart';
 
-import '../../constants/color_value.dart';
+import '../../core/constants/color_value.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -23,22 +24,16 @@ class SplashPage extends StatelessWidget {
         child: BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             if (state is SuccesAuthenticationState) {
-              Future.delayed(
-                const Duration(milliseconds: 2000),
-                () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const NavigationPage(),
                 ),
               );
             }
             if (state is FailureAuthenticationState) {
-              Future.delayed(
-                const Duration(milliseconds: 2000),
-                () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
                 ),
               );
             }
@@ -52,7 +47,7 @@ class SplashPage extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'Zuba kasir',
-                    style: GoogleFonts.reenieBeanie(
+                    style: GoogleFonts.quicksand(
                         fontWeight: FontWeight.w500,
                         fontSize: 64.sp,
                         color: Colors.white),
